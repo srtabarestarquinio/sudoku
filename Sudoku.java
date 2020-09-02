@@ -7,19 +7,27 @@ Outline:
 */
 import java.util.*;
 
-public class Main
+public class Sudoku
 {	
 	//Welcome user, take user input for initial fixed values of board
 	public static void main(String[] args){
 		Scanner input=new Scanner(System.in);
 		
 		Sudoku sudoku = new Sudoku();
-
-		sudoku.enterBoard();
-		sudoku.fillBoard();
-		sudoku.printBoard();
 		
 		System.out.println("\nWelcome to Sodoku! ");
+		int [][] board = sudoku.enterBoard();
+
+		
+		System.out.println("\nSearching: ");
+		sudoku.fillBoard();
+		search(board);
+
+		System.out.println("\nSolved Board: ");
+		sudoku.printBoard(board);
+	}
+
+	public int [][] enterBoard(){
 		System.out.println("\nEnter a sudoku puzzle! ");
 		System.out.println("\nDigits from 1-9 and '0' to indicate empty cells.");
 		//create a double array, 9x9 board
@@ -41,15 +49,40 @@ public class Main
 		        
 		    }
 		}
-		System.out.println("\nSearching: ");
-		search(board);
-		System.out.println("\nSolved Board: ");
-		printBoard(board);
+		return board;
 	}
 
+	public void fillBoard(int [][] board){
+		search(board)
 
+	}
+	//Search for a solution
+	public boolean search(int[][] board){
+		int[][] emptyCells = getEmptyCells(board);
+		return search(0, emptyCells, board);
+	}
+	private boolean search(int k, int[][] emptyCells, int[][] board){
+		if(k < emptyCells.length){
+			int row = emptyCells[k][0];
+			int column = emptyCells[k][1];
+
+			for(int i=1; i<10; i++){
+				board[row][column] = i;
+				//Recursion:
+				if(isValid(row, column, board) && search(k+1, emptyCells, board))
+					return true;
+			}
+			//if there is no solution at current position, go back to cell before to try to find solution
+			board[row][column] = 0;
+			return false;
+		}
+		else{
+			//All free cells are already solved
+			return true;
+		}
+	}
 	//Get cells that are empty '.'
-	private static int[][] getEmptyCells( int [][] board){
+	private int[][] getEmptyCells( int [][] board){
 		int amountOfEmptyCells = 0;
 		//nested for loop to go through all cells of double array
 		for(int i=0; i<9; i++){
@@ -73,33 +106,9 @@ public class Main
 		}
 		return emptyCells;
 	}
-	//Search for a solution
-	public static boolean search(int[][] board){
-		int[][] emptyCells = getEmptyCells(board);
-		return search(0, emptyCells, board);
-	}
-	private static boolean search(int k, int[][] emptyCells, int[][] board){
-		if(k < emptyCells.length){
-			int row = emptyCells[k][0];
-			int column = emptyCells[k][1];
-
-			for(int i=1; i<10; i++){
-				board[row][column] = i;
-				//Recursion:
-				if(isValid(row, column, board) && search(k+1, emptyCells, board))
-					return true;
-			}
-			//if there is no solution at current position, go back to cell before to try to find solution
-			board[row][column] = 0;
-			return false;
-		}
-		else{
-			//All free cells are already solved
-			return true;
-		}
-	}
+	
 	//check if position board[i][j] is valid
-	private static boolean isValid(int i, int j, int[][] board){
+	private boolean isValid(int i, int j, int[][] board){
 		//check if value we want to put in position board[i][j] is not already in any cell in that row
 		for(int col=0; col<9; col++){
 			//compare value of each cell in that row to the desired value
@@ -128,13 +137,28 @@ public class Main
 	}
 	//Function to print the solved Sudoku Puzzle
 	//solution numbers in red
-	public static void printBoard(int[][] board){
+	public void printBoard(int[][] board){
+		System.out.println("\n |-------|-------|-------|");
+
 		for(int i=0; i<9; i++){
 			for(int j=0; j<9; j++){
-				System.out.print(board[i][j] + " ");
-			System.out.println();
+				if(j%3 == 0)
+				{
+					System.out.print(" |");
+				}
+				System.out.printf("%2d", board[i][j]);
+				if(j == 8)
+				{
+					System.out.print(" |");
+				}			
 			}
+			if(i == 2 || i == 5 || i == 8)
+			{
+				System.out.print("\n |-------|-------|-------|");
+			}
+			System.out.println();
 		}
+		System.out.println();
 	}
 
 }
