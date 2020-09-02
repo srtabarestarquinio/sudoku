@@ -65,6 +65,7 @@ public class Sudoku
 				if(isValid(row, column, board) && search(k+1, emptyCells, board))
 					return true;
 			}
+			//Backtracking
 			//if there is no solution at current position, go back to cell before to try to find solution
 			board[row][column] = 0;
 			return false;
