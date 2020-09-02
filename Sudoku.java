@@ -1,10 +1,3 @@
-/* 
-Outline:
--go throught double array cell by cell starting 0,0 (top left corner)
--if content of cell is '.', then we have to find the number that fits there
--if the cells around it do not contain enough numbers to give clues about what number to put in that cell, then leave it as '.' and continue looping
--after we finish looping, 
-*/
 import java.util.*;
 
 public class Sudoku
