@@ -1,27 +1,31 @@
 import java.util.*;
 
-public class Sudoku
+public class Main
 {	
 	//Welcome user, take user input for initial fixed values of board
 	public static void main(String[] args){
-		Scanner input=new Scanner(System.in);
 		
-		Sudoku sudoku = new Sudoku();
+		//Main sudoku = new Main();
 		
 		System.out.println("\nWelcome to Sodoku! ");
-		int [][] board = sudoku.enterBoard();
+		int [][] board = enterBoard();
 
-		
 		System.out.println("\nSearching: ");
-		sudoku.fillBoard();
-		search(board);
-
-		System.out.println("\nSolved Board: ");
-		sudoku.printBoard(board);
+		if(!isValid(board)){
+			System.out.println("The input is not valid");
+		}
+		else if(fillBoard(board)){
+			System.out.println("\nSolved Board: ");
+			printBoard(board);
+		}
+		else{
+			System.out.println("This board has no solutions");
+		}
 	}
 
-	public int [][] enterBoard(){
-		System.out.println("\nEnter a sudoku puzzle! ");
+	public static int [][] enterBoard(){
+		Scanner input=new Scanner(System.in);
+    	System.out.println("\nEnter a sudoku puzzle! ");
 		System.out.println("\nDigits from 1-9 and '0' to indicate empty cells.");
 		//create a double array, 9x9 board
 		int[][] board = new int [9][9];
@@ -30,53 +34,16 @@ public class Sudoku
 		for(int i=0; i<9; i++){
 			System.out.println("\nRow "+ (i+1));
 			for(int j=0; j<9; j++){
-				System.out.println("\nColumn "+ (j+1));
-				int value= input.nextInt();
+				int value=input.nextInt();
 				board[i][j] = value;
 			}
 		}
 		System.out.println("\nGiven board: ");
-		for(int i=0; i<9; i++){
-		    for(int j=0; j<9; j++){
-		        System.out.println(board[i][j]+" ");
-		        
-		    }
-		}
+		printBoard(board);
 		return board;
 	}
-
-	public void fillBoard(int [][] board){
-		search(board)
-
-	}
-	//Search for a solution
-	public boolean search(int[][] board){
-		int[][] emptyCells = getEmptyCells(board);
-		return search(0, emptyCells, board);
-	}
-	private boolean search(int k, int[][] emptyCells, int[][] board){
-		if(k < emptyCells.length){
-			int row = emptyCells[k][0];
-			int column = emptyCells[k][1];
-
-			for(int i=1; i<10; i++){
-				board[row][column] = i;
-				//Recursion:
-				if(isValid(row, column, board) && search(k+1, emptyCells, board))
-					return true;
-			}
-			//Backtracking
-			//if there is no solution at current position, go back to cell before to try to find solution
-			board[row][column] = 0;
-			return false;
-		}
-		else{
-			//All free cells are already solved
-			return true;
-		}
-	}
 	//Get cells that are empty '.'
-	private int[][] getEmptyCells( int [][] board){
+	private static int[][] getEmptyCells( int [][] board){
 		int amountOfEmptyCells = 0;
 		//nested for loop to go through all cells of double array
 		for(int i=0; i<9; i++){
@@ -100,9 +67,44 @@ public class Sudoku
 		}
 		return emptyCells;
 	}
+	public static boolean fillBoard(int [][] board){
+		return search(board);
+
+	}
+	//Search for a solution
+	public static boolean search(int[][] board){
+		int[][] emptyCells = getEmptyCells(board);
+		return search(0, emptyCells, board);//start searching at emptycell 0
+	}
+	private static boolean search(int k, int[][] emptyCells, int[][] board){
+		if(k < emptyCells.length){
+			int row = emptyCells[k][0];
+			int column = emptyCells[k][1];
+
+			for(int i=1; i<10; i++){
+				board[row][column] = i;
+				//Recursion:
+				if(isValid(row, column, board) && search(k+1, emptyCells, board)){
+					return true;
+				}
+				else{
+					//Backtracking
+					//if there is no solution at current position, go back to cell before to try to find solution
+					board[row][column] = 0;
+					return false;
+				}
+			}
+			
+		}
+		else{
+			//All free cells are already solved
+			return true;
+		}
+	}
+
 	
 	//check if position board[i][j] is valid
-	private boolean isValid(int i, int j, int[][] board){
+	private static boolean isValid(int i, int j, int[][] board){
 		//check if value we want to put in position board[i][j] is not already in any cell in that row
 		for(int col=0; col<9; col++){
 			//compare value of each cell in that row to the desired value
@@ -129,9 +131,20 @@ public class Sudoku
 		//if value in especific cell passes all three conditions, then it is valid in that position
 		return true;
 	}
+	//check that the entered values are valid in their position
+	public static boolean isValid(int [][] board){
+		for(int i=0; i<9; i++){
+			for(int j=0; j<9; j++){
+				if(board[i][j] != 0 && !isValid(i, j, board)){
+					return false;
+				}
+			}
+		}
+		return true;//this proves the entered cells are valid
+	}
 	//Function to print the solved Sudoku Puzzle
 	//solution numbers in red
-	public void printBoard(int[][] board){
+	public static void printBoard(int[][] board){
 		System.out.println("\n |-------|-------|-------|");
 
 		for(int i=0; i<9; i++){
@@ -154,5 +167,4 @@ public class Sudoku
 		}
 		System.out.println();
 	}
-
 }
