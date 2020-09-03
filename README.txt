@@ -8,6 +8,7 @@ Goal:
 	Intake semi completed sudoku board and find solution for remaing empty cells and output completed sudoku board using Backtracking Algorithm
 
 Comments:
+	Outline of functions implementation:
 	-main: 
 		-create initial board: rowsXcolumns=9x9=n^2
 		-printScreen: n^2
